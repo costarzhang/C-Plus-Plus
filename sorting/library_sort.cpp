@@ -75,8 +75,9 @@ int main() {
     // ---example--
     int index_ex[] = {-6, 5, 9, 1, 9, 1, 0, 1, -8, 4, -12};
     int n_ex = sizeof(index_ex) / sizeof(index_ex[0]);
-
+    std::cout << n_ex << std::endl;
     librarySort(index_ex, n_ex);
+
     std::cout << "sorted array :" << std::endl;
     for (int i = 0; i < n_ex; i++) std::cout << index_ex[i] << " ";
     std::cout << std::endl;

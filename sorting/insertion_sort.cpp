@@ -14,7 +14,7 @@ int main() {
         std::cin >> Array[i];
     }
 
-    // Sorting
+    // Sorting  插入排序
     for (int i = 1; i < n; i++) {
         int temp = Array[i];
         int j = i - 1;
