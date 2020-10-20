@@ -149,7 +149,7 @@ void createBST(BTNode *&bt, int key[], int n) {
 }
 
 void BSTsort(BTNode *bt) {
-    if (bt) {
+    if (bt) {//中序遍历二叉排序树
         BSTsort(bt->left);
         cout << bt->key << " ";
         BSTsort(bt->right);
@@ -164,5 +164,6 @@ int main() {
     cout << endl;
     BFT(bt);
     cout << endl;
+    BSTsort(bt);
     return 0;
 }

@@ -12,7 +12,14 @@ typedef struct BSTNode {
     int bf; // 平衡因子
     struct BSTNode *left, *right;
 }BSTNode, *BSTree;
-
+/*
+             A                           B
+            /  \                        /  \
+           B    AR                     BL   A
+          /  \  (H)                  (H+1) /  \      
+         BL   BR                          BR   AR
+        (H+1) (H)                         (H)  (H)
+*/
 // 单右旋操作
 void R_Rotate(BSTNode *&p) {
     // 对以p为根节点的二叉排序树作右旋处理
@@ -36,14 +43,13 @@ void leftBalance(BSTNode *&bt) {
     BSTNode *l = bt->left;
     BSTNode *r;
     switch (l->bf) {
-        case LH:// LL型 l的原左子树比右子树高1，若在l的右子树中插入结点
-                // 则无需处理，若在l的左子树中插入结点 
-            bt->bf = l->bf = EH; // 做单右旋处理
+        case LH:// LL型
+            bt->bf = l->bf = EH; // 先修改平衡因子为0
             R_Rotate(bt); break;
-        case RH: // LR型 //l的左子树比右子树低
+        case RH: // LR型
             r = l->right;
             switch (r->bf) { // 调整平衡因子
-                case LH: // 原r的左子树比右子树高1
+                case LH:
                     bt->bf = RH; l->bf = EH; break;
                 case EH:
                     bt->bf = l->bf = EH; break;
@@ -51,7 +57,7 @@ void leftBalance(BSTNode *&bt) {
                     bt->bf = EH; l->bf = LH; break;
             }
             r->bf = EH;
-            L_Rotate(bt->left); //  对bt的左子树作左旋处理
+            L_Rotate(bt->left); // 对bt的左子树作左旋处理
             R_Rotate(bt); // 对bt作右旋处理
             break;
     }
@@ -62,18 +68,18 @@ void rightbalance(BSTNode *&bt) {
     BSTNode *l;
     switch (r->bf) {
         case RH: // RR
-            bt->bf = r->bf = EH;
-            L_Rotate(bt);
+            bt->bf = r->bf = EH; // 修改平衡因子为0
+            L_Rotate(bt); //单左旋
             break;
         case LH: // RL
             l = r->left;
-            switch (l->bf) {
+            switch (l->bf) { // 修改平衡因子
                 case LH:
-                    bt->bf = RH; r->bf = EH; break;
+                    bt->bf = EH; r->bf = RH; break;
                 case EH:
                     bt->bf = r->bf = EH; break;
                 case RH:
-                    bt->bf = EH; l->bf = RH; break;
+                    bt->bf = LH; r->bf = EH; break;
             }
             l->bf = EH;
             R_Rotate(bt->right);
@@ -153,7 +159,7 @@ void BFT(BSTNode *bt) {
 int main() {
     bool tall = false;
     BSTNode *bt1 = nullptr;
-    // 测试LL型
+    // 测试LL型3
     cout << "LL:" << endl;
     insertAVL(bt1, 12, tall);
     BFT(bt1);
@@ -187,12 +193,19 @@ int main() {
     cout << "RL:" << endl;
     BSTNode *bt4 = nullptr;
     tall = false;
-    insertAVL(bt4, 10, tall);
+    insertAVL(bt4, 2, tall);
     BFT(bt4);
-    insertAVL(bt4, 12, tall);
+    insertAVL(bt4, 7, tall);
     BFT(bt4);
-    insertAVL(bt4, 11, tall);
+    insertAVL(bt4, 1, tall);
     BFT(bt4);
+    insertAVL(bt4, 4, tall);
+    BFT(bt4);
+    insertAVL(bt4, 8, tall);
+    BFT(bt4);
+    insertAVL(bt4, 5, tall);
+    BFT(bt4);
+
 
     // 综合测试
     BSTNode *bstree = nullptr;
