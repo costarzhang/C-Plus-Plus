@@ -106,7 +106,7 @@ void BSTdelete(BTNode *&bt, int key) {
             bt = bt->right; // 以其右子树代替
             free(q);
         } else { // 待删除结点的左右子树均不为空
-            q = bt;
+            q = bt;                    //以直接后继代替
             s = bt->right;
             while (s->left != nullptr) {
                 q = s;
@@ -119,7 +119,7 @@ void BSTdelete(BTNode *&bt, int key) {
                 q->right = s->right;
             }
             /*
-            q = bt;
+            q = bt;                     // 以直接前驱代替
             s = bt->left;
             while (s->right != nullptr) { // 寻找结点前驱，q指向bt的直接前驱的父节点，bt的直接前驱有两种可能：1.bt的左孩子2.bt的左孩子的右孩子或者左孩子的右孩子的右孩子...
                 q = s;
