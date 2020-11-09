@@ -1,35 +1,59 @@
 #include <iostream>
-#include <string.h>
 using namespace std;
+#define maxsize 8
+/*
+问题由模式串决定
+对于失配字符前的串，模式串和文本串已经完全匹配，
+模式串存在公共前后缀，则前缀一定可以和后缀对应的文本串匹配。
+*/
 
-int next[100];
-
-void getNext(char p[])
+// 计算模式串指针位置，即next数组
+/*
+对于模式串【a1, a2, ... , ai-1, ai, ..., an】，
+next[i]的值是当在第i个字符处产生不匹配时，模式串指针需要调整的位置。
+其在值上等于其前面子串（不妨称为模式串字串）【a1, a2, ...,ai-1】
+中的最长公共前后缀长度+，在执行匹配时便是已匹配的字符串。
+指针iPrefix指示【a1, a2, ... ai-1】中的最长公共前缀的最后一个字符，
+iPostfix指示最长公共后缀的最后一个字符，即第i个字符的前一个字符，
+其不发生回溯。
+*/
+void next(string text)
 {
-    int len = strlen(p);
-    next[0] = 0;
-    int i = 0, j = 0;
-    for (j = 1; j < len; j++)
-    {                                 // i 代表最长前缀后缀长度
-        while (p[i] != p[j] && i > 0) // 当p[i] != p[j] 时，减小最长前缀后缀长度
-            i = next[i - 1];
-        if (p[i] == p[j])
+    int next[8];
+    int iPostfix = 1;
+    int iPrefix = 0;
+    next[1] = 0;
+    while (iPostfix < text.length())
+    {
+        // 最长公共前缀为0，则next[iPostfix++] = 0 + 1
+        // 最长公共前缀最后一个字符和最长公共后缀最后一个字符匹配
+        // next[iPostfix++] = iPrefix,因为iPrefix是最长公共前缀的最后一个字符
+        // 也就代表的最长公共前缀长度
+        if (iPrefix == 0 || text[iPrefix] == text[iPostfix])
         {
-            i++;         //最长公共前缀后缀长度+1
-            next[j] = i; //匹配失败时跳到该处
+            iPostfix++;
+            iPrefix++;
+            next[iPostfix] = iPrefix;
         }
-        else
-            next[j] = 0;
+        else // 字符不匹配，回溯前缀指针至上一次匹配成功的字符后一个位置
+        {
+            iPrefix = next[iPrefix];
+        }
+        /*
+        理解：【a1, a2, a3, ... aiPrefix, ..., aiPostfix, ai】
+        在aiPrefix和aiPostfix处失配，则a1到aiPrefix-1的串一定和aiPostfix
+        之前的一个串匹配。
+        */
+    }
+    for (int i = 1; i <= 7; i++)
+    {
+        cout << next[i] << " ";
     }
 }
+
 int main()
 {
-    char p[100];
-    cin >> p;
-    int len = strlen(p);
-    getNext(p);
-    for (int i = 0; i < len; i++)
-        cout << next[i] << " ";
-    cout << endl;
+    string s = "#ABABAAB";
+    next(s);
     return 0;
 }
