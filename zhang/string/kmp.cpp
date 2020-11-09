@@ -28,7 +28,7 @@ void next(string text)
         // 最长公共前缀为0，则next[iPostfix++] = 0 + 1
         // 最长公共前缀最后一个字符和最长公共后缀最后一个字符匹配
         // next[iPostfix++] = iPrefix,因为iPrefix是最长公共前缀的最后一个字符
-        // 也就代表的最长公共前缀长度
+        // 也就代表最长公共前缀长度
         if (iPrefix == 0 || text[iPrefix] == text[iPostfix])
         {
             iPostfix++;
