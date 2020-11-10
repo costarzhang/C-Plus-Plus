@@ -109,7 +109,6 @@ BTNode *createBTree()
     { //向树中插入结点
         cout << "插入的结点" << data << "在" << root->data << "(根结点)的左子树还是右子树: ";
         cin >> p;
-
         if (p == 'l')
         { // 在bt的左子树中插入结点
             insert(root, root->left, data, p);
