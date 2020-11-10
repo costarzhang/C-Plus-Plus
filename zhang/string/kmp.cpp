@@ -73,7 +73,7 @@ int kmp(string text, string pattern, int next[], int pos)
 }
 int main()
 {
-    string text = "#ababcabcacbab";
+    //string text = "#ababcabcacbab";
     string pattern = "#abcac";
     int next[6] = {0};
     getnext(pattern, next);
