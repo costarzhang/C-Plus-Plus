@@ -5,6 +5,24 @@
 #include <map>
 #include <string>
 using namespace std;
+
+/**图
+ * 任何图的所有顶点度数之和等于边数额2倍
+ * 任何图都有偶数个奇度顶点
+ * 
+ * 含有n个顶点的无向完全图含有n(n-1) / 2条边，最大度为n-1
+ * 含有n个顶点的有向完全图含有n(n-1)条边
+ * 简单回路，回路中不存在重复的边
+ * 
+ * 可达矩阵，设有向图D=<V, E>, 顶点集<V1, V2, ..., Vn>
+ * 定义矩阵P=(pij)n*n
+ * 其中pij = 0(顶点Vi到Vj不可达)；pij = 1(顶点Vi到Vj可达)
+ * B=A+A^2+A^3+...+A^n
+ * 
+ * 对于有n个顶点的图的邻接矩阵A,A^m中的元素Aij表示从顶点Vi到Vj的
+ * 路径长度为m的路径条数
+ * 
+ * /
 /*
 极大连通子图：
 1.连通图只有一个极大连通子图，就是它本身。（是唯一的）
@@ -27,23 +45,22 @@ using namespace std;
 带权联通图中任意一个环中包含的边的权值均不相等 => 图的最小生成树唯一
 图的最小生成树唯一 <=> 对于非最小生成树的边，其权值与该边两端点在最小生成树上的路径最小边权值相等
 */
-
 /**
- * 十字链表存储有向图
+ * 十字链表存储有向图，整合邻接表与逆邻接表
  * 邻接多重表存储无向图
  * 
 */
+
 // 邻接表存储图
-//没条边存储该边指向的结点，该边的权值，信息，以及下一条边
+//每条边存储该边指向的顶点，该边的权值，信息，以及下一条边，即弧尾相同的下一条边
 typedef struct ArcNode
 {                                      // 边表结点
-    int adjvex;                        // 该边所指结点编号
+    int adjvex;                        // 该边所指顶点编号，即弧头
     string info;                       // 该边的信息
     float weight;                      // 权值
     struct ArcNode *nextarc = nullptr; // 指向下一条边的指针
 
 } AcrNode;
-
 typedef struct VNode
 {                                // 顶点表结点
     int data;                    // 顶点信息
@@ -51,7 +68,6 @@ typedef struct VNode
     int outcount;                // 出度
     ArcNode *firstarc = nullptr; // 指向第一条边的指针
 } VNode;
-
 typedef struct AGraph
 {                   // 邻接表
     int v;          // 顶点数
@@ -59,7 +75,6 @@ typedef struct AGraph
     VNode *adjlist; // 顶点表
     float **edges;  // 邻接矩阵
 } AGraph;
-
 typedef struct VertAGraph
 {                   // 逆邻接表
     int v;          // 顶点数
@@ -68,13 +83,62 @@ typedef struct VertAGraph
     float **edges;  // 逆邻接矩阵
 } VertAGraph;
 
+// 十字链表弧结构
+typedef struct CrossArcNode
+{
+    // 弧 src---->dest
+    int src;                        // 弧尾顶点
+    int dest;                       // 弧头顶点
+    struct CrossArcNode *src_next;  // 表示弧尾相同的下一条边，即src顶点的出边
+    struct CrossArcNode *dest_next; // 表示弧头相同的下一条边，即dest顶点的入边
+    float weight;                   //权值
+    string info;                    // 弧的信息
+    // 这样src顶点的所有出边被链成一个单链表，dest的所有入边被链成一个单链表
+} CrossArcNode;
+typedef struct CrossVNode
+{
+    int data;
+    CrossArcNode *firstin;  //以该顶点为弧头的弧
+    CrossArcNode *firstout; // 以该边为弧尾的弧
+} CrossVNode;
+typedef struct CrossGraph //十字链表
+{
+    int v;
+    int e;
+    CrossVNode *adjlist; //顶点表
+} CrossGraph;
+
+//邻接多重表边结构
+typedef struct MulArcNode
+{
+    float weight;
+    string info;
+    int ivex;                 //顶点
+    struct MulArcNode *ilink; // 依附于ivex顶点的边
+    int jvex;
+    struct MulArcNode *jlink;
+} MulArcNode;
+typedef struct MulVNode
+{
+    int data;
+    MulArcNode *firstedge; // 第一条依附于该顶点的边
+} MulVNode;
+typedef struct MulGraph
+{
+    int v;
+    int e;
+    MulVNode *adjlist; // 顶点表
+} MulGraph;
+
 // 初始化邻接表
-AGraph initAGraph(int v, int e)
+AGraph
+initAGraph(int v, int e)
 {
     AGraph agraph;
-    agraph.v = v;                  // 图结点数
+    agraph.v = v;                  // 结点数
     agraph.e = e;                  // 边数
     agraph.adjlist = new VNode[v]; // 顶点表
+    // 初始化顶点表
     for (int i = 0; i < v; i++)
     {
         agraph.adjlist[i].data = i;
@@ -92,7 +156,7 @@ AGraph initAGraph(int v, int e)
     {
         for (int j = 0; j < v; j++)
         {
-            if (i != j)
+            if (i != j) //Vi到Vj不存在边
             {
                 agraph.edges[i][j] = DBL_MAX;
             }
@@ -104,7 +168,6 @@ AGraph initAGraph(int v, int e)
     }
     return agraph;
 }
-
 // 初始化逆邻接表
 VertAGraph initVAGraph(int v, int e)
 {
@@ -207,10 +270,10 @@ void addedge(VertAGraph vagraph, AGraph agraph, int src, int dest, int weight, s
 
     // 生成一条新的边
     AcrNode *arcnode = new ArcNode;
-    arcnode->adjvex = dest;
-    arcnode->info = ac;
-    arcnode->weight = weight;
-    arcnode->nextarc = nullptr;
+    arcnode->adjvex = dest;     // src--->dest, dest表示弧头顶点
+    arcnode->info = ac;         // 该边代表的活动
+    arcnode->weight = weight;   // 边权值
+    arcnode->nextarc = nullptr; //第一条出边
 
     // 处理该结点的第一个邻接点
     if (agraph.adjlist[src].firstarc == nullptr)
@@ -233,9 +296,10 @@ void addedge(VertAGraph vagraph, AGraph agraph, int src, int dest, int weight, s
         agraph.adjlist[dest].incount += 1;
         agraph.edges[src][dest] = weight;
     }
-    // 逆邻接表与逆邻接矩阵
+
+    // 逆邻接表
     AcrNode *srcnode = new AcrNode;
-    srcnode->adjvex = src;
+    srcnode->adjvex = src; //dest<---src
     srcnode->nextarc = nullptr;
     arcnode->weight = weight;
     arcnode->info = ac;
