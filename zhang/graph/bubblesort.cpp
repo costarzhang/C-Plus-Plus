@@ -1,22 +1,28 @@
 #include <iostream>
 using namespace std;
-void display(int a[], int n) {
-    for (int i = 1; i <= n; i++) {
+void display(int a[], int n)
+{
+    for (int i = 1; i <= n; i++)
+    {
         cout << a[i] << " ";
     }
     cout << endl;
 }
-bubblesort(int a[], int n) {
+void bubblesort(int a[], int n)
+{
     int i, j;
     int flag = 0;
 
-    for (j = 1; j <= n; j++) {
+    for (j = 1; j <= n; j++)
+    {
         flag = 0;
-        for (i = 1; i <= j; i++) {
-            if (a[i] > a[i+1]) {
+        for (i = 1; i <= j; i++)
+        {
+            if (a[i] > a[i + 1])
+            {
                 a[0] = a[i];
-                a[i] = a[i+1];
-                a[i+1] = a[0];
+                a[i] = a[i + 1];
+                a[i + 1] = a[0];
                 flag = 1;
             }
             if (!flag)
@@ -25,8 +31,8 @@ bubblesort(int a[], int n) {
     }
 }
 
-
-int main() {
+int main()
+{
     int a[6] = {999, 5, 4, 3, 2, 1};
     int i, j;
     int flag = 0;
