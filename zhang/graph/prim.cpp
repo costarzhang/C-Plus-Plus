@@ -391,7 +391,7 @@ bool bellmanford(MGraph mgraph, int v, float dist[], int path[])
     {
 
         isRelax = false;
-        //对各边进行松弛操作
+        // 进行一轮松弛操作
         for (int e = 0; e < mgraph.e; e++)
         {
             if (dist[edge[e].src] < DBL_MAX && dist[edge[e].src] + edge[e].weight < dist[edge[e].dest])
@@ -404,6 +404,7 @@ bool bellmanford(MGraph mgraph, int v, float dist[], int path[])
         count++;
     }
     bool negtive_circle = false;
+    // 在进行一轮松弛操作，检查是否存在负权回路
     for (int e = 0; e < mgraph.e; e++)
     {
         if (dist[edge[e].src] + edge[e].weight < dist[edge[e].dest])
@@ -414,6 +415,7 @@ bool bellmanford(MGraph mgraph, int v, float dist[], int path[])
     }
     return negtive_circle;
 }
+
 // floyd
 void printpath(int u, int v, int **path)
 {
@@ -485,6 +487,10 @@ void floyd(MGraph mgraph, float **A, int **path)
     }
 }
 
+// 使用队列优化的bellman-ford算法
+void bellman_fordpro(MGraph, int s, float dist[], int path)
+{
+}
 int main()
 {
     /*
