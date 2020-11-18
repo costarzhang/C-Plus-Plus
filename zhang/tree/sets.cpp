@@ -5,6 +5,7 @@ using namespace std;
 
 int sets[10];
 
+// 初始化
 void init(int s[])
 {
     for (int i = 0; i < s.length(); i++)
@@ -20,6 +21,7 @@ void find(int s[], int x)
     return x;
 }
 
+//合并
 void unin(int s[], int root1, int root2)
 {
     s[root2] = root1; // 将root2作为root1的一个孩子
