@@ -488,18 +488,100 @@ void floyd(MGraph mgraph, float **A, int **path)
 }
 
 // 使用队列优化的bellman-ford算法
-void bellman_fordpro(MGraph, int s, float dist[], int path)
+bool bellman_fordpro(MGraph mgraph, int s, float dist[], int path[])
 {
+    // 初始化dist数组
+    for (int i = 0; i < mgraph.v; i++)
+    {
+        if (i == s)
+        {
+            dist[i] = 0;
+        }
+        else
+        {
+            dist[i] = DBL_MAX;
+        }
+        path[i] = -1;
+    }
+    int book[mgraph.v];      // book数组标记顶点是否在数组中
+    int queue[mgraph.v + 1]; //队列
+    int front, rear;
+    int maxsize = mgraph.v + 1;
+    front = rear = 0;
+
+    for (int i = 0; i < mgraph.v; i++)
+    {
+        book[i] = 0;
+    }
+
+    // 源结点入队
+    rear = (rear + 1) % maxsize;
+    queue[rear] = s;
+    book[s] = 1;
+    int curr;             //待处理的队首结点
+    while (front != rear) //队列不为空
+    {
+        front = (front + 1) % maxsize;
+        curr = queue[front];
+        // 处理待处理顶点的所有出边
+        for (int dest = 0; dest < mgraph.v; dest++)
+        {
+            if (curr != dest && mgraph.edges[curr][dest] < DBL_MAX)
+            {
+                if (dist[dest] > dist[curr] + mgraph.edges[curr][dest])
+                {
+                    dist[dest] = dist[curr] + mgraph.edges[curr][dest];
+                    path[dest] = curr;
+                    if (book[dest] == 0)
+                    {
+                        rear = (rear + 1) % maxsize;
+                        queue[rear] = dest;
+                        book[dest] = 1;
+                    }
+                }
+            }
+        }
+    }
+    Edge edge[mgraph.e];
+    int c = 0;
+    for (int src = 0; src < mgraph.v; src++)
+    {
+        for (int dest = 0; dest < mgraph.v; dest++)
+        {
+            if (mgraph.edges[src][dest] < DBL_MAX && src != dest)
+            {
+                edge[c].src = src;
+                edge[c].dest = dest;
+                edge[c].weight = mgraph.edges[src][dest];
+                c++;
+            }
+        }
+    }
+
+    for (int i = 0; i < mgraph.v; i++)
+        cout << dist[i] << " ";
+    bool negtive_circle = false;
+    // 再进行一轮松弛操作，检查是否存在负权回路
+    for (int e = 0; e < mgraph.e; e++)
+    {
+        if (dist[edge[e].src] + edge[e].weight < dist[edge[e].dest])
+        {
+            negtive_circle = true;
+            break;
+        }
+    }
+    return negtive_circle;
 }
 int main()
 {
     /*
-0 1 4
-1 0 4
-1 2 -3
-2 1 -3
-0 2 5
-2 0 5
+1 2 2
+1 5 10
+2 3 3
+2 5 7
+3 4 4
+4 5 5
+5 3 6
 */
     int v, e;
     cout << "Input the vertexs and edges of graph: ";
@@ -513,15 +595,18 @@ int main()
         addedge(mgraph, src, dest, weight);
     }
 
-    printgraph(mgraph);
     float dist[mgraph.v];
     int path[mgraph.v];
-    if (!bellmanford(mgraph, 0, dist, path))
+    if (!bellman_fordpro(mgraph, 1, dist, path))
     {
         for (int i = 0; i < mgraph.v; i++)
         {
             cout << path[i] << " ";
         }
+    }
+    else
+    {
+        cout << "存在负环！";
     }
 
     /*
