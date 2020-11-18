@@ -66,7 +66,9 @@ typedef struct VNode
     int data;                    // 顶点信息
     int incount;                 // 入度
     int outcount;                // 出度
+    int timestamp_dfs = 0;       // 深度优先遍历时间戳
     ArcNode *firstarc = nullptr; // 指向第一条边的指针
+    int iscutpoint = 0;
 } VNode;
 typedef struct AGraph
 {                   // 邻接表
@@ -908,20 +910,79 @@ void key_route(map<string, int> &e, map<string, int> l, AGraph &agraph)
     cout << agraph.adjlist[i - 1].data << endl; // 汇点
     cout << "路径长度为:" << length << endl;
 }
+/**
+ * 求图的割点
+ * agraph 图
+ * curr 当前访问的顶点
+ * pre curr的父亲顶点
+ * timestamp 时间戳计数
+ * low[] 记录顶点在不经过父顶点能够回到较早访问的顶点
+ * root深度优先遍历起始顶点（根顶点）
+ */
+void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int root)
+{
+    ArcNode *p; //工作指针
+    int child;  // 记录深度优先生成树中curr顶点的子顶点
+
+    timestamp++; //每遍历到一个顶点，时间戳计数+1，记录每个顶点被访问的次序
+
+    agraph.adjlist[curr].timestamp_dfs = timestamp;
+    low[curr] = timestamp; //当前顶点能够回到的最早被访问的顶点的时间戳
+
+    p = agraph.adjlist[curr].firstarc;
+    while (p != nullptr)
+    {
+        if (agraph.adjlist[p->adjvex].timestamp_dfs == 0) //当前顶点未被访问
+        {
+            child++; //当前顶点孩子顶点数+1
+            dfscut(agraph, p->adjvex, curr, timestamp, low, root);
+            // 更新当前顶点可以不仅过其父顶点回到更早访问顶点的时间戳
+            low[curr] = low[curr] < low[p->adjvex] ? low[curr] : low[p->adjvex];
+
+            // 如果当前顶点curr不是根顶点
+            if (curr != root && low[p->adjvex] >= agraph.adjlist[curr].timestamp_dfs)
+            {
+                agraph.adjlist[curr].iscutpoint = 1;
+            }
+            //如果当前顶点为根顶点，当其有两个孩子顶点时，其为割点
+            if (curr == root && child == 2)
+            {
+                agraph.adjlist[curr].iscutpoint = 1;
+            }
+        }
+        else if (p->adjvex != pre)
+        {
+            low[curr] = low[curr] < agraph.adjlist[p->adjvex].timestamp_dfs ? low[curr] : agraph.adjlist[p->adjvex].timestamp_dfs;
+        }
+
+        p = p->nextarc;
+    }
+}
 
 int main()
 {
-    AGraph agraph = initAGraph(5, 8);
-    VertAGraph vagraph = initVAGraph(5, 8);
+    AGraph agraph = initAGraph(7, 14);
+    VertAGraph vagraph = initVAGraph(7, 14);
 
-    addedge(vagraph, agraph, 0, 1, 2, "a0");
-    addedge(vagraph, agraph, 0, 4, 10, "a1");
-    addedge(vagraph, agraph, 1, 2, 9, "a2");
-    addedge(vagraph, agraph, 1, 4, 1, "a3");
-    addedge(vagraph, agraph, 2, 0, 4, "a4");
-    addedge(vagraph, agraph, 2, 3, 4, "a5");
-    addedge(vagraph, agraph, 3, 4, 5, "a6");
-    addedge(vagraph, agraph, 4, 2, 3, "a7");
+    addedge(vagraph, agraph, 1, 3, 1, "a0");
+    addedge(vagraph, agraph, 3, 1, 1, "a1");
+    addedge(vagraph, agraph, 1, 4, 1, "a2");
+    addedge(vagraph, agraph, 4, 1, 1, "a3");
+    addedge(vagraph, agraph, 4, 2, 1, "a4");
+    addedge(vagraph, agraph, 2, 4, 1, "a5");
+    addedge(vagraph, agraph, 3, 2, 1, "a6");
+    addedge(vagraph, agraph, 2, 3, 1, "a7");
+    addedge(vagraph, agraph, 2, 5, 1, "a7");
+    addedge(vagraph, agraph, 5, 2, 1, "a7");
+    addedge(vagraph, agraph, 2, 6, 1, "a7");
+    addedge(vagraph, agraph, 6, 2, 1, "a7");
+    addedge(vagraph, agraph, 5, 6, 1, "a7");
+    addedge(vagraph, agraph, 6, 5, 1, "a7");
+    int timestamp = 0;
+    int low[agraph.v];
+    dfscut(agraph, 1, 1, timestamp, low, 1);
+    for (int i = 1; i < agraph.v; i++)
+        cout << agraph.adjlist[i].iscutpoint << " ";
     /*
     int visited[5];
     for (int i = 0; i < 5; i++)
@@ -931,6 +992,7 @@ int main()
     dfsmin(agraph, 0, 3, visited, dist, min);
     cout << min;
     */
+    /*
     int visited[5];
     for (int i = 0; i < 5; i++)
         visited[i] = 0;
@@ -940,6 +1002,7 @@ int main()
         que[i].s = que[i].v = 0;
     }
     bfsmin(agraph, 0, visited, 3, que);
+    */
     /*
     int *top = topsort(agraph);
     printinandout(agraph);
