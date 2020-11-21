@@ -962,6 +962,10 @@ void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int roo
 }
 
 // 求图的割边
+/**将图进行深度优先遍历，记录顶点遍历顺序，当一个顶点的邻接点中存在一个顶点不能经过除该
+ * 结点以外的其他顶点回到在该顶点之前访问过的点以及该顶点自身，则该顶点和此邻接点组成的
+ * 边即为图的一条割边
+ */
 void cutedge(AGraph agraph, int curr, int pre, int &timestamp, int low[], int root)
 {
     ArcNode *p; //工作指针
