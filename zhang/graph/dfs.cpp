@@ -951,7 +951,7 @@ void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int roo
                 agraph.adjlist[curr].iscutpoint = 1;
             }
         }
-        // p-<adjvex被访问过并且其不是curr的父节点，起始就是要求curr不经过其父顶点回到跟早访问顶点
+        // p-->adjvex被访问过并且其不是curr的父节点，其实就是要求curr不经过其父顶点回到跟早访问顶点
         else if (p->adjvex != pre)
         {
             low[curr] = low[curr] < agraph.adjlist[p->adjvex].timestamp_dfs ? low[curr] : agraph.adjlist[p->adjvex].timestamp_dfs;
@@ -961,23 +961,57 @@ void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int roo
     }
 }
 
+// 求图的割边
+void cutedge(AGraph agraph, int curr, int pre, int &timestamp, int low[], int root)
+{
+    ArcNode *p; //工作指针
+
+    timestamp++; //每遍历到一个顶点，时间戳计数+1，记录每个顶点被访问的次序
+
+    agraph.adjlist[curr].timestamp_dfs = timestamp;
+    low[curr] = timestamp; //当前顶点能够回到的最早被访问的顶点的时间戳
+
+    p = agraph.adjlist[curr].firstarc;
+    while (p != nullptr)
+    {
+        if (agraph.adjlist[p->adjvex].timestamp_dfs == 0) //当前顶点未被访问
+        {
+            cutedge(agraph, p->adjvex, curr, timestamp, low, root);
+            // 更新当前顶点可以不仅过其父顶点回到更早访问顶点的时间戳
+            low[curr] = low[curr] < low[p->adjvex] ? low[curr] : low[p->adjvex];
+
+            // 如果当前顶点curr不是根顶点
+            if (curr != root && low[p->adjvex] > agraph.adjlist[curr].timestamp_dfs)
+            { //curr的子顶点中存在一个顶点p->adjvex不经过curr到达更早访问过的顶点
+                cout << curr << "---" << p->adjvex << endl;
+            }
+        }
+        // p-<adjvex被访问过并且其不是curr的父节点，其实就是要求curr不经过其父顶点回到跟早访问顶点
+        else if (p->adjvex != pre)
+        {
+            low[curr] = low[curr] < agraph.adjlist[p->adjvex].timestamp_dfs ? low[curr] : agraph.adjlist[p->adjvex].timestamp_dfs;
+        }
+
+        p = p->nextarc;
+    }
+}
 int main()
 {
-    AGraph agraph = initAGraph(5, 6);
-    VertAGraph vagraph = initVAGraph(5, 6);
+    AGraph agraph = initAGraph(4, 8);
+    VertAGraph vagraph = initVAGraph(4, 8);
 
-    addedge(vagraph, agraph, 1, 2, 1, "a0");
-    addedge(vagraph, agraph, 2, 1, 1, "a1");
-    addedge(vagraph, agraph, 2, 3, 1, "a2");
-    addedge(vagraph, agraph, 3, 2, 1, "a3");
-    addedge(vagraph, agraph, 2, 4, 1, "a4");
-    addedge(vagraph, agraph, 4, 2, 1, "a5");
+    addedge(vagraph, agraph, 0, 1, 1, "a0");
+    addedge(vagraph, agraph, 1, 0, 1, "a1");
+    addedge(vagraph, agraph, 0, 2, 1, "a2");
+    addedge(vagraph, agraph, 2, 0, 1, "a3");
+    addedge(vagraph, agraph, 1, 2, 1, "a4");
+    addedge(vagraph, agraph, 2, 1, 1, "a5");
+    addedge(vagraph, agraph, 1, 3, 1, "a5");
+    addedge(vagraph, agraph, 3, 1, 1, "a5");
 
     int timestamp = 0;
     int low[agraph.v];
-    dfscut(agraph, 4, 4, timestamp, low, 4);
-    for (int i = 1; i < agraph.v; i++)
-        cout << agraph.adjlist[i].iscutpoint << " ";
+    cutedge(agraph, 0, 0, timestamp, low, 0);
     /*
     int visited[5];
     for (int i = 0; i < 5; i++)
