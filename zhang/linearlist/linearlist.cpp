@@ -6,6 +6,7 @@ typedef struct
 {
     int *data;
     int length = 0;
+    int maxsize = 0;
 } seqlist;
 
 // 初始化
@@ -14,6 +15,7 @@ int init(seqlist &l, int size, int incrcement)
     if (l.data = (int *)malloc((size + incrcement) * sizeof(int)))
     {
         l.length = 0;
+        l.maxsize = size + incrcement;
         return 1;
     }
     else
@@ -24,8 +26,10 @@ int init(seqlist &l, int size, int incrcement)
 // 顺序表扩容
 int expansion(seqlist &l, int increment)
 {
-    if (l.data = (int *)realloc(&l, (sizeof(l) + increment) * sizeof(int)))
+    l.data = (int *)realloc(l.data, (l.length + increment) * sizeof(int));
+    if (l.data)
     {
+        l.maxsize = l.length + increment;
         return 1;
     }
     else
@@ -37,7 +41,7 @@ int expansion(seqlist &l, int increment)
 // 插入
 int insert(seqlist &l, int position, int e)
 {
-    if (l.length == sizeof(l.data))
+    if (l.length == l.maxsize)
     {
         expansion(l, 1); // 表空间满，扩容
     }
@@ -92,7 +96,7 @@ int getelem(seqlist &l, int position, int &e)
 
 void destroy(seqlist &l)
 {
-    free(&l);
+    free(l.data);
 }
 void clear(seqlist &l)
 {
@@ -109,11 +113,11 @@ void print(seqlist &l)
 int main()
 {
 
-    /*
     seqlist l;
     init(l, 1, 0);
     insert(l, 0, 1);
-    insert(l, 1, 2);
+    insert(l, 0, 2);
     print(l);
-    */
+    destroy(l);
+    print(l);
 }
