@@ -45,7 +45,22 @@ void getnext(string pattern, int next[])
         */
     }
 }
-
+// 优化next数组
+void getnextval(int nextval[], int next[], string pattern)
+{
+    nextval[1] = 0;
+    for (int j = 2; j < pattern.length(); j++)
+    {
+        if (pattern[next[j]] == pattern[j])
+        {
+            nextval[j] = nextval[next[j]];
+        }
+        else
+        {
+            nextval[j] = next[j];
+        }
+    }
+}
 int kmp(string text, string pattern, int next[], int pos)
 {
     int iText = pos; // 文本串指针，开始匹配位置

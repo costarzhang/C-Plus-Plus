@@ -114,10 +114,36 @@ int main()
 {
 
     seqlist l;
-    init(l, 1, 0);
-    insert(l, 0, 1);
-    insert(l, 0, 2);
+    init(l, 10, 0);
+    l.data[0] = 8;
+    l.data[1] = 3;
+    l.data[2] = 3;
+    l.data[3] = 3;
+    l.data[4] = 3;
+    l.data[5] = 2;
+    l.data[6] = 3;
+    l.data[7] = 5;
+    l.data[8] = 3;
+    l.data[9] = 8;
+    l.length = 10;
     print(l);
-    destroy(l);
+    cout << endl;
+    int i, j, k;
+    k = 0;
+    for (i = 0; i < 10; i++)
+    {
+        for (j = 0; j < k && l.data[i] != l.data[j]; j++)
+            ;
+
+        if (j == k)
+        {
+            if (k != i)
+            {
+                l.data[k] = l.data[i];
+                k++;
+            }
+        }
+    }
+    l.length = k;
     print(l);
 }
