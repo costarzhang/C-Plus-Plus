@@ -1,7 +1,7 @@
 #include <iostream>
 #include <list>
 using namespace std;
-
+#define maxsize 20
 /*树的性质
     1.树中结点数等于所有结点度数之和加1
     2.度为m的树中第i层至多有m^(i-1)
