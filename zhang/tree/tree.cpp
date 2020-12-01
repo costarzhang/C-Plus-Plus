@@ -2,7 +2,6 @@
 #include <list>
 using namespace std;
 
-#define maxsize 20
 /*树的性质
     1.树中结点数等于所有结点度数之和加1
     2.度为m的树中第i层至多有m^(i-1)
@@ -46,18 +45,17 @@ using namespace std;
     度为1的结点有0个，度为2的结点有k个
 */
 
-// 孩子存储结构
 typedef struct BTNode
 {
-    unsigned int weight; // 结点权值
     char data;
+    unsigned int weight;   // 结点权值
     struct BTNode *left;   // 左孩子
     struct BTNode *right;  // 右孩子
     struct BTNode *parent; // 双亲
     // 线索化标记
     int ltag = 0; // 前驱
     int rtag = 0; // 后继
-} BTNode;
+} BTNode, *BT;
 
 // 插入结点
 void insert(BTNode *curr, BTNode *bt, char data, char pos)
