@@ -74,7 +74,7 @@ void shellsort(int A[], int n)
     int temp;
     for (dk = n / 2; dk >= 1; dk = dk / 2) // 增量每次减为一半
     {
-        for (i = dk + 1; i <= n; i++)
+        for (i = dk + 1; i < n; i++)
         {
             if (A[i] < A[i - dk]) //检查位于同一个子表中的记录
             {
@@ -86,14 +86,45 @@ void shellsort(int A[], int n)
                 A[j + dk] = temp;
             }
         }
+        print(A, n);
+        cout << endl;
     }
 }
+/*
+void shellsort(int A[], int n)
+{
+    int dk; //增量
+    int i;
+    int j;
+    int k;
+    int temp;
+    for (dk = n / 2; dk >= 1; dk = dk / 2) // 增量每次减为一半
+    {
+        for (k = 0; k < dk; k++)
+        {
+            for (i = dk + k; i < n; i += dk)
+            {
+                if (A[i] < A[i - dk]) //检查位于同一个子表中的记录
+                {
+                    temp = A[i];
+                    for (j = i - dk; j >= 0 && temp < A[j]; j -= dk)
+                    {
+                        A[j + dk] = A[j];
+                    }
+                    A[j + dk] = temp;
+                }
+            }
+        }
+        print(A, n);
+        cout << endl;
+    }
+}
+*/
 int main()
 {
-    int A[10] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+    int A[10] = {49, 38, 65, 97, 76, 13, 27, 49, 55, 4};
     //insertsort(A, 10);
     //binaryinsertsort(A, 10);
     shellsort(A, 10);
-    print(A, 10);
     return 0;
 }
