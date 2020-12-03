@@ -36,6 +36,7 @@ void sort(int A[], int n)
 }
 
 // 快速排序
+/*
 void quicksort(int A[], int left, int right)
 {
     int ileft, iright; //左右哨兵
@@ -68,14 +69,57 @@ void quicksort(int A[], int left, int right)
     // 基准值归位
     A[left] = A[ileft];
     A[ileft] = pivot;
+    print(A, 10);
+    cout << endl;
     quicksort(A, left, ileft - 1); // 递归
     quicksort(A, ileft + 1, right);
 }
+*/
+// 快速排序
+void quicksort(int A[], int left, int right)
+{
+    int ileft, iright; //左右哨兵
+    int pivot;
+    ileft = left;
+    iright = right;
+    pivot = A[left];
 
+    if (left < right)
+    {
+        while (ileft < iright)
+        {
+            // 从右向找到一个比基准值小的记录
+            while (A[iright] >= pivot && ileft < iright)
+            {
+                iright--;
+            }
+            if (ileft < iright)
+            {
+                A[ileft] = A[iright];
+                ileft++;
+            }
+            //从左向右找到一个比基准值大的记录
+            while (A[ileft] <= pivot && ileft < iright)
+            {
+                ileft++;
+            }
+            if (ileft < iright)
+            {
+                A[iright] = A[ileft];
+                iright--;
+            }
+        }
+        // 基准值归位
+        A[ileft] = pivot;
+        print(A, 10);
+        cout << endl;
+        quicksort(A, left, ileft - 1); // 递归
+        quicksort(A, ileft + 1, right);
+    }
+}
 int main()
 {
     int A[10] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
     quicksort(A, 0, 9);
-    print(A, 10);
     return 0;
 }
