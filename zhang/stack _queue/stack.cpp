@@ -80,11 +80,7 @@ int getlength(stack *s)
 /*
 (1) 初始化两个栈：运算符栈S1和储存中间结果的栈S2；
 (2) 从右至左扫描中缀表达式；
-
-
 (3) 遇到操作数时，将其压入S2；
-
-
 (4) 遇到运算符时，比较其与S1栈顶运算符的优先级：
 (4-1) 如果S1为空，或栈顶运算符为右括号“)”，则直接将此运算符入栈；
 (4-2) 否则，若优先级比栈顶运算符的较高或相等，也将运算符压入S1；
@@ -114,6 +110,7 @@ void trans(string p)
         int flag = 0;
         while (isdigit(p[count]) || p[count] == '.')
         {
+
             flag = 1;
             result[c] += p[count];
             count++;
@@ -122,7 +119,7 @@ void trans(string p)
         {
             c++;
         }
-        if (')' == p[count])
+        if (')' == p[count]) //遇到右括号，依次出栈栈中元素，直到遇到一个左括号与之配对
         {
             char e;
             pop(&s, e);
@@ -160,8 +157,15 @@ void trans(string p)
         {
             push(&s, p[count]);
         }
-
+        if (p[count] == '#')
+            break;
         count++;
+    }
+    while (getlength(&s)) //栈中剩余元素依次出栈输出
+    {
+        char e;
+        pop(&s, e);
+        result[c++] = e;
     }
     result[c] = '#';
     int i = 0;
@@ -173,7 +177,7 @@ void trans(string p)
 }
 int main()
 {
-    string s = "(((35+15)*(80-70))/20)#";
+    string s = "1.2+2*2#";
     trans(s);
     return 0;
 }
