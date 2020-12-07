@@ -2,8 +2,6 @@
 #include <list>
 using namespace std;
 
-
-
 // 二叉排序树
 /*
 一颗二叉排序树：
@@ -11,31 +9,43 @@ using namespace std;
     若右子树非空，则右子树上所有结点的关键字值大于根结点的关键字值
     左右子树本身右是一颗二叉排序树
 */
-typedef struct BTNode {
+typedef struct BTNode
+{
     int key;
     struct BTNode *left;
     struct BTNode *right;
-}BTNode;
+} BTNode;
 
 // 查找
-BTNode *BSTsearch(BTNode *bt, int key) {
-    if (bt == nullptr) {
+BTNode *BSTsearch(BTNode *bt, int key)
+{
+    if (bt == nullptr)
+    {
         return nullptr;
-    } else {
-        if (bt->key == key) {
+    }
+    else
+    {
+        if (bt->key == key)
+        {
             return bt;
-        } else if(key < bt->key) {
+        }
+        else if (key < bt->key)
+        {
             return BSTsearch(bt->right, key);
-        } else {
+        }
+        else
+        {
             return BSTsearch(bt->left, key);
         }
     }
 }
 // 层序遍历
-void BFT(BTNode *bt) {
+void BFT(BTNode *bt)
+{
     list<BTNode *> queue;
     queue.push_back(bt);
-    while (!queue.empty()) {
+    while (!queue.empty())
+    {
         bt = queue.front();
         cout << bt->key << "  ";
         queue.pop_front();
@@ -47,18 +57,27 @@ void BFT(BTNode *bt) {
 }
 
 // 插入结点
-int BSTinsert (BTNode *&bt, int key) {
-    if (bt == nullptr) {
+int BSTinsert(BTNode *&bt, int key)
+{
+    if (bt == nullptr)
+    {
         bt = new BTNode;
         bt->key = key;
         bt->right = bt->left = nullptr;
         return 1;
-    } else {
-        if(key == bt->key) { // 二叉排序树中各结点关键字值不相等
+    }
+    else
+    {
+        if (key == bt->key)
+        { // 二叉排序树中各结点关键字值不相等
             return 0;
-        } else if (key < bt->key) { // 插入结点的关键字值小于根节点值，则向根的左子树中插入
+        }
+        else if (key < bt->key)
+        { // 插入结点的关键字值小于根节点值，则向根的左子树中插入
             return BSTinsert(bt->left, key);
-        } else {
+        }
+        else
+        {
             return BSTinsert(bt->right, key);
         }
     }
@@ -88,34 +107,49 @@ int BSTinsert (BTNode *&bt, int key) {
 3.若被删除结点有两颗子树，则以该节点的直接后继（或者直接前驱）替代该结点
 然后从树中删除这个直接后继（或者直接前驱），转换为1或者2的情况。这里的直接后继是指中序遍历序列的直接后继
 */
-void BSTdelete(BTNode *&bt, int key) {
+void BSTdelete(BTNode *&bt, int key)
+{
     BTNode *q, *s;
-    if (bt == nullptr) {
+    if (bt == nullptr)
+    {
         return;
-    }else if (bt->key == key) {
-        if (!bt->right && !bt->left) { // 找到结点直接删除
+    }
+    else if (bt->key == key)
+    {
+        if (!bt->right && !bt->left)
+        { // 找到结点直接删除
             q = bt;
             bt = nullptr;
             free(q);
-        } else if (!bt->right) {  // 待删除结点仅有左子树
+        }
+        else if (!bt->right)
+        { // 待删除结点仅有左子树
             q = bt;
             bt = bt->left; // 以其左子树代替
             free(q);
-        }else if (!bt->left) { // 待删除结点仅有右子树
+        }
+        else if (!bt->left)
+        { // 待删除结点仅有右子树
             q = bt;
             bt = bt->right; // 以其右子树代替
             free(q);
-        } else { // 待删除结点的左右子树均不为空
-            q = bt;                    //以直接后继代替
+        }
+        else
+        {           // 待删除结点的左右子树均不为空
+            q = bt; //以直接后继代替
             s = bt->right;
-            while (s->left != nullptr) {
+            while (s->left != nullptr)
+            { //寻找bt右子树的最左下结点
                 q = s;
                 s = s->left;
             }
             bt->key = s->key;
-            if (q != bt) {
+            if (q != bt)
+            {
                 q->left = s->right;
-            } else {
+            }
+            else
+            {
                 q->right = s->right;
             }
             /*
@@ -132,30 +166,39 @@ void BSTdelete(BTNode *&bt, int key) {
                 q->left = s->left;
             }*/
         }
-    } else if(key < bt->key) {
+    }
+    else if (key < bt->key)
+    {
         BSTdelete(bt->left, key);
-    } else if (key > bt->key) {
-        BSTdelete(bt->right,key);
+    }
+    else if (key > bt->key)
+    {
+        BSTdelete(bt->right, key);
     }
 }
 
 // 创建二叉排序树
-void createBST(BTNode *&bt, int key[], int n) {
+void createBST(BTNode *&bt, int key[], int n)
+{
     int i;
     bt = nullptr;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++)
+    {
         BSTinsert(bt, key[i]);
     }
 }
 
-void BSTsort(BTNode *bt) {
-    if (bt) {//中序遍历二叉排序树
+void BSTsort(BTNode *bt)
+{
+    if (bt)
+    { //中序遍历二叉排序树
         BSTsort(bt->left);
         cout << bt->key << " ";
         BSTsort(bt->right);
     }
 }
-int main() {
+int main()
+{
     int key[10] = {53, 17, 78, 9, 45, 46, 65, 60, 66, 94};
     BTNode *bt = nullptr;
     createBST(bt, key, 10);

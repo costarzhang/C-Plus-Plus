@@ -466,7 +466,7 @@ void floyd(MGraph mgraph, float **A, int **path)
     cout << endl;
     //printarray(path, mgraph);
     cout << endl;
-    // 以k为中间接待你，检测所有顶点对(i,j) 之间的最短路径
+    // 以k为中间顶点，检测所有顶点对(i,j) 之间的最短路径
     for (k = 0; k < mgraph.v; k++)
     {
         for (i = 0; i < mgraph.v; i++)
