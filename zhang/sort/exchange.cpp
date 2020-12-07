@@ -13,6 +13,7 @@ void print(int A[], int n)
     {
         cout << A[i] << " ";
     }
+    cout << endl;
 }
 void swap(int &a, int &b)
 {
@@ -117,9 +118,43 @@ void quicksort(int A[], int left, int right)
         quicksort(A, ileft + 1, right);
     }
 }
+//双向冒泡排序
+void bubblesortb(int a[], int n)
+{
+    int left = 0, right = n - 1;
+    int flag;
+    while (left < right)
+    {
+        flag = 0;
+        for (int i = left; i < right; i++)
+        {
+            if (a[i] > a[i + 1])
+            {
+                swap(a[i], a[i + 1]);
+                flag = 1;
+            }
+        }
+        if (!flag)
+            break;
+        right--;
+        for (int j = right; j > left; j--)
+        {
+            if (a[j] < a[j - 1])
+            {
+                swap(a[j], a[j - 1]);
+                flag = 1;
+            }
+        }
+        if (!flag)
+            break;
+        left++;
+        print(a, n);
+    }
+}
 int main()
 {
     int A[10] = {9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    quicksort(A, 0, 9);
+    bubblesortb(A, 10);
+    print(A, 10);
     return 0;
 }
