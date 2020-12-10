@@ -131,12 +131,12 @@ void BFT(BTNode *bt)
     queue.push_back(bt); // 将根结点入队
     while (!queue.empty())
     {
-        bt = queue.front();       // 取栈顶结点
+        bt = queue.front();       // 取队头结点
         cout << bt->data << "  "; // 访问
         queue.pop_front();        // 将访问过的结点出队
-        if (bt->left != NULL)     // 将访问过的结点的左右孩子入对
+        if (bt->left != nullptr)  // 将访问过的结点的左右孩子入对
             queue.push_back(bt->left);
-        if (bt->right != NULL)
+        if (bt->right != nullptr)
             queue.push_back(bt->right);
     }
 }
