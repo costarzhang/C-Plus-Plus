@@ -100,8 +100,8 @@ typedef struct CrossArcNode
 typedef struct CrossVNode
 {
     int data;
-    CrossArcNode *firstin;  //以该顶点为弧头的弧
-    CrossArcNode *firstout; // 以该顶点为弧尾的弧
+    CrossArcNode *firstin;  //以该顶点为弧头的第一条弧
+    CrossArcNode *firstout; // 以该顶点为弧尾的第一条弧
 } CrossVNode;
 typedef struct CrossGraph //十字链表
 {
