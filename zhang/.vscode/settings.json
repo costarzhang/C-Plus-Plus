@@ -1,6 +1,10 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "string.h": "c",
+        "stdio.h": "c",
+        "cstdlib": "cpp",
+        "diceroll.h": "c"
     }
 }
