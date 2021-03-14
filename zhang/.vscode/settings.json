@@ -5,6 +5,8 @@
         "string.h": "c",
         "stdio.h": "c",
         "cstdlib": "cpp",
-        "diceroll.h": "c"
+        "diceroll.h": "c",
+        "*.tbl": "cpp",
+        "liststatic.h": "c"
     }
 }

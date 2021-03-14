@@ -9,5 +9,15 @@ ungetc() setvbuf() fread()
 */
 int main(int argc, char **argv)
 {
+    int i[1] = {8};
+    int a[3];
+    FILE *fp;
+    fp = fopen("test", "a");
+    //fprintf(fp,"%d",i[0]);
+    fwrite(i, sizeof(int), 1, fp);
+    FILE *f = fopen("test", "r");
+    fread(a, sizeof(int), 1, f);
+    printf("%d\n", a[0]);
     return 0;
 }
+
