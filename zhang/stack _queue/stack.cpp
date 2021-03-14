@@ -75,9 +75,6 @@ void printstack(stack *s)
         e++;
     }
 }
-/*
-
-*/
 
 //中缀转后缀
 void intopos(string p)
@@ -231,6 +228,7 @@ void intopre(string p)
         cout << result[c--] << ' ';
     }
 }
+
 int main()
 {
     string s = "(3+5)*7";
