@@ -8,7 +8,11 @@ typedef struct TNode
     struct TNode *firstchild, *nextsibling;
 } * Tree;
 
-// 树的创建
+/*创建树
+tree 当前节点
+pre 当前节点的父节点
+
+*/
 void create(Tree &tree, bool iffirstchild, bool ifnextsibling, TNode *pre)
 {
     char data;
@@ -45,7 +49,7 @@ void create(Tree &tree, bool iffirstchild, bool ifnextsibling, TNode *pre)
         create(tree->nextsibling, false, sibling, tree);
     }
 }
-
+//先序遍历
 void pre(Tree tree)
 {
     if (tree != nullptr)
@@ -55,9 +59,11 @@ void pre(Tree tree)
         pre(tree->nextsibling);
     }
 }
+
 int main()
 {
     Tree tree = nullptr;
     create(tree, false, false, tree);
     pre(tree);
+    pos(tree);
 }

@@ -117,9 +117,8 @@ void BSTdelete(BTNode *&bt, int key)
     else if (bt->key == key)
     {
         if (!bt->right && !bt->left)
-        { // 找到结点直接删除
+        { // 叶子结点直接删除
             q = bt;
-            bt = nullptr;
             free(q);
         }
         else if (!bt->right)
@@ -144,7 +143,7 @@ void BSTdelete(BTNode *&bt, int key)
                 s = s->left;
             }
             bt->key = s->key;
-            if (q != bt)
+            if (q != bt) //结点s没有左子树，故以s的右子树代替
             {
                 q->left = s->right;
             }

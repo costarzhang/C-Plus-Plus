@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 #define maxsize 4
-// 循环队列
+// 循环队列,不牺牲空间
 typedef struct
 {
     int *qu;

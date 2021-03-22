@@ -7,6 +7,17 @@
         "cstdlib": "cpp",
         "diceroll.h": "c",
         "*.tbl": "cpp",
-        "liststatic.h": "c"
+        "liststatic.h": "c",
+        "unordered_map": "c",
+        "functional": "c",
+        "optional": "c",
+        "*.tcc": "c",
+        "vector": "c",
+        "memory": "c",
+        "string_view": "c",
+        "string": "c",
+        "system_error": "c",
+        "thread": "c",
+        "*.def": "c"
     }
 }
