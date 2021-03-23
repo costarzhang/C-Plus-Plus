@@ -10,5 +10,3 @@ typedef struct tree_node
     int NPL; //零路径长度
 } * priority_queue;
 
-
-
