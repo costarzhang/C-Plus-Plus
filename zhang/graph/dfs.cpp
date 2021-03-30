@@ -23,6 +23,7 @@ using namespace std;
  * 路径长度为m的路径条数
  * 
  * /
+
 /*
 极大连通子图：
 1.连通图只有一个极大连通子图，就是它本身。（是唯一的）
@@ -41,9 +42,10 @@ using namespace std;
 1.强连通图的极大强连通子图为其本身。（是唯一的）
 2.非强连通图有多个极大强连通子图。（非强连通图的极大强连通子图叫做强连通分量）
 
+####
 带权联通图中所有边的权值不同 => 图的最小生成树唯一
 带权联通图中任意一个环中包含的边的权值均不相等 => 图的最小生成树唯一
-图的最小生成树唯一 <=> 对于非最小生成树的边，其权值与该边两端点在最小生成树上的路径最小边权值相等
+图的最小生成树唯一 <=> 对于非最小生成树的边，其权值与该边两端点在最小生成树上的路径最小边权值不相等
 */
 /**
  * 十字链表存储有向图，整合邻接表与逆邻接表
@@ -61,6 +63,7 @@ typedef struct ArcNode
     struct ArcNode *nextarc = nullptr; // 指向下一条边的指针
 
 } AcrNode;
+//顶点表存储图中所有结点
 typedef struct VNode
 {                                // 顶点表结点
     int data;                    // 顶点信息
@@ -77,6 +80,7 @@ typedef struct AGraph
     VNode *adjlist; // 顶点表
     float **edges;  // 邻接矩阵
 } AGraph;
+//在逆邻接表的顶点表中，每个顶点存储指向该顶点的边
 typedef struct VertAGraph
 {                   // 逆邻接表
     int v;          // 顶点数
@@ -88,7 +92,7 @@ typedef struct VertAGraph
 // 十字链表弧结构
 typedef struct CrossArcNode
 {
-    // 弧 src---->dest
+    // 弧 src(弧尾)---->dest(弧头)
     int src;                        // 弧尾顶点
     int dest;                       // 弧头顶点
     struct CrossArcNode *src_next;  // 表示弧尾相同的下一条边，即src顶点的出边
@@ -97,11 +101,12 @@ typedef struct CrossArcNode
     string info;                    // 弧的信息
     // 这样src顶点的所有出边被链成一个单链表，dest的所有入边被链成一个单链表
 } CrossArcNode;
+//十字链表顶点结构
 typedef struct CrossVNode
 {
     int data;
-    CrossArcNode *firstin;  //以该顶点为弧头的第一条弧
-    CrossArcNode *firstout; // 以该顶点为弧尾的第一条弧
+    CrossArcNode *firstin;  // 以该顶点为弧头的第一条弧，即指向该顶点的边所在的弧
+    CrossArcNode *firstout; // 以该顶点为弧尾的第一条弧，即该顶点发出的边所在的弧
 } CrossVNode;
 typedef struct CrossGraph //十字链表
 {

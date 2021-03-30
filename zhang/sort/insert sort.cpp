@@ -3,7 +3,7 @@ using namespace std;
 /**
  * 插入类排序
  * 1.直接插入排序 o(n^2) o(1)
- * 2.折半插入排序 o(nlog2n) o(1)
+ * 2.折半插入排序 o(n^2) o(1)
  * 3.希尔排序     o(n^2)-o(n^1.3) o(1)
  */
 void print(int A[], int n)
@@ -26,7 +26,7 @@ void insertsort(int A[], int n)
         if (A[i] < A[i - 1])
         {
             temp = A[i];
-            for (j = i - 1; temp < A[j]; --j)
+            for (j = i - 1; temp < A[j]; --j) //元素后移，空出插入位置
             {
                 A[j + 1] = A[j];
             }
@@ -35,6 +35,10 @@ void insertsort(int A[], int n)
     }
 }
 
+//折半插入排序
+/**
+ * 在有序序列中使用折半查找找到插入位置,以减少元素比较次数
+ */
 void binaryinsertsort(int A[], int n)
 {
     int i, j, low, high, mid;
@@ -72,6 +76,8 @@ void shellsort(int A[], int n)
     int i;
     int j;
     int temp;
+    print(A, n);
+    cout << endl;
     for (dk = n / 2; dk >= 1; dk = dk / 2) // 增量每次减为一半
     {
         for (i = dk + 1; i < n; i++)
@@ -89,6 +95,7 @@ void shellsort(int A[], int n)
         print(A, n);
         cout << endl;
     }
+    print(A, n);
 }
 /*
 void shellsort(int A[], int n)
@@ -122,7 +129,7 @@ void shellsort(int A[], int n)
 */
 int main()
 {
-    int A[10] = {49, 38, 65, 97, 76, 13, 27, 49, 55, 4};
+    int A[10] = {4, 8, 9, 1, 10, 6, 2, 5, 3, 7};
     //insertsort(A, 10);
     //binaryinsertsort(A, 10);
     shellsort(A, 10);
