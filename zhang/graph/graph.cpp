@@ -952,9 +952,9 @@ void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int roo
     {
         if (agraph.adjlist[p->adjvex].timestamp_dfs == 0) //当前顶点未被访问
         {
-            child++; //当前顶点孩子顶点数+1
+            child++; //孩子顶点数+1
             dfscut(agraph, p->adjvex, curr, timestamp, low, root);
-            // 更新当前顶点可以不仅过其父顶点回到更早访问顶点的时间戳
+            // 更新当前顶点可以不经过其父顶点回到更早访问顶点的时间戳
             low[curr] = low[curr] < low[p->adjvex] ? low[curr] : low[p->adjvex];
 
             // 如果当前顶点curr不是根顶点
@@ -968,7 +968,7 @@ void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int roo
                 agraph.adjlist[curr].iscutpoint = 1;
             }
         }
-        // p-->adjvex被访问过并且其不是curr的父节点，其实就是要求curr不经过其父顶点回到跟早访问顶点
+        // p-->adjvex被访问过并且其不是curr的父顶点，其实就是要求curr不经过其父顶点回到更早早访问顶点
         else if (p->adjvex != pre)
         {
             low[curr] = low[curr] < agraph.adjlist[p->adjvex].timestamp_dfs ? low[curr] : agraph.adjlist[p->adjvex].timestamp_dfs;
