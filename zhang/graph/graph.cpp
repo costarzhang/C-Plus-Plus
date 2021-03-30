@@ -115,16 +115,17 @@ typedef struct CrossGraph //十字链表
     CrossVNode *adjlist; //顶点表
 } CrossGraph;
 
-//邻接多重表边结构
+//邻接多重表边结构,每条边依附于两个顶点
 typedef struct MulArcNode
 {
-    float weight;
+    float weight; //边权值
     string info;
     int ivex;                 //顶点
-    struct MulArcNode *ilink; // 依附于ivex顶点的边
+    struct MulArcNode *ilink; // 依附于ivex顶点的另一条边
     int jvex;
     struct MulArcNode *jlink;
 } MulArcNode;
+//邻接多重表顶点结构
 typedef struct MulVNode
 {
     int data;
@@ -406,7 +407,7 @@ void printinandout(AGraph agraph)
     }
 }
 
-// 广度优先遍历
+// 广度优先遍历 时间复杂度 O(V+E)[邻接表] O(V^2)[邻接矩阵]
 void bfs(AGraph agraph, int v, int *visited, int &f)
 {
     ArcNode *p;
@@ -448,7 +449,9 @@ typedef struct note
 {
     int v, s;
 } note;
-// 广度优先遍历求最短路径
+// 广度优先遍历求最短路径[无权值]
+/*广度优先遍历每次先遍历同层结点，所以是最近的，基于贪心的思想
+*/
 void bfsmin(AGraph agraph, int v, int *visited, int dst, note que[])
 {
     ArcNode *p;
@@ -485,18 +488,18 @@ void bfsmin(AGraph agraph, int v, int *visited, int dst, note que[])
             }
             p = p->nextarc;
         }
-        if (!flag)
+        if (!flag) //最短路径找到
             break;
     }
     cout << que[rear].v << "  " << que[rear].s;
 }
 
-// 深度优先遍历（递归）
+// 深度优先遍历（递归）O(V+E)[邻接表] O(V^2)[邻接矩阵]
 void dfs(AGraph agraph, int v, int *visited)
 {
     ArcNode *p;
 
-    cout << "--->" << v;
+    cout << "--->" << v; //访问当前结点
     visited[v] = 1;
 
     p = agraph.adjlist[v].firstarc;
@@ -510,18 +513,20 @@ void dfs(AGraph agraph, int v, int *visited)
     }
 }
 
-// 深度优先遍历（递归）求最短路径
+// 深度优先遍历（递归）求最短路径(仅找到最短路径长度，未记录路径)
 void dfsmin(AGraph agraph, int v, int dst, int *visited, int dist, int &min)
 {
     ArcNode *p;
-    if (dist > min)
+    if (dist > min) //起始结点到达当前顶点的距离不是最短路径
         return;
-    if (v == dst)
+    if (v == dst) //到达目标顶点
     {
         if (dist < min)
-            min = dist;
+            min = dist; //更新最短路径长度
         return;
     }
+
+    //访问当前结点
     visited[v] = 1;
 
     p = agraph.adjlist[v].firstarc;
@@ -537,7 +542,7 @@ void dfsmin(AGraph agraph, int v, int dst, int *visited, int dist, int &min)
     return;
 }
 
-// 使用栈进行深度优先遍历
+// [使用栈进行深度优先遍历]
 void dfswithstack(AGraph agraph, int v, int *visited)
 {
     ArcNode *p = nullptr;
@@ -626,7 +631,7 @@ int *topsort(AGraph agraph)
 int topsort1(AGraph agraph)
 {
     int i, j, n = 0;
-    int *queue = new int[agraph.v + 1];
+    int *queue = new int[agraph.v + 1]; //辅助队列
     int front = 0;
     int rear = 0;
     AcrNode *p = nullptr;
@@ -673,7 +678,7 @@ int topsort1(AGraph agraph)
     }
 }
 
-// 逆拓扑排序
+// 逆拓扑排序(逆邻接表存储)
 int *verttopsort(VertAGraph vagraph)
 {
     int i, j, n = 0;
@@ -721,7 +726,7 @@ int *verttopsort(VertAGraph vagraph)
         return 0;
     }
 }
-// 拓扑排序（深度优先遍历)
+// 拓扑排序（深度优先遍历)，仅适用有向无环图
 void topsortbydfs(AGraph agraph, int v, int *visited)
 {
     ArcNode *p;
@@ -731,13 +736,13 @@ void topsortbydfs(AGraph agraph, int v, int *visited)
     {
         if (visited[p->adjvex] == 0)
         {
-            topsortbydfs(agraph, p->adjvex, visited);
+            topsortbydfs(agraph, p->adjvex, visited); //图中无环，所以图中在最后一个顶点(汇点)处会退出算法
             cout << p->adjvex;
         }
         p = p->nextarc;
     }
 }
-
+/*求关键路径(从源点到汇点的路径中，具有最大路径长度的路径)*/
 // 获取结点前继以及权值
 void getPre(VertAGraph vagraph, int v, int &Prev, int &weight, int visited[])
 {
@@ -756,7 +761,7 @@ void getPre(VertAGraph vagraph, int v, int &Prev, int &weight, int visited[])
     }
 }
 
-// 计算事件k最早发生时间
+// 计算事件(顶点)k最早发生时间[源点到k的最长路径长]
 int *ve_k(int top[], VertAGraph vagraph)
 {
     int *ve = new int[vagraph.v]; // 存储结果
@@ -766,19 +771,19 @@ int *ve_k(int top[], VertAGraph vagraph)
     }
 
     for (int i = 1; i <= vagraph.v - 1; i++)
-    { // 更具拓扑序列，依次求剩余结点的ve
-        int *visited = new int[vagraph.v];
+    {                                      // 根据拓扑序列，依次求剩余结点的ve
+        int *visited = new int[vagraph.v]; //访问标记
         for (int k = 0; k < vagraph.v; k++)
         {
             visited[k] = 0;
         }
-        for (int j = 0; j < vagraph.adjlist[top[i]].incount; j++)
+        for (int j = 0; j < vagraph.adjlist[top[i]].incount; j++) //遍历到达当前顶点的所有路径
         {
             int Prev, weight;
-            getPre(vagraph, top[i], Prev, weight, visited);
+            getPre(vagraph, top[i], Prev, weight, visited); //找到当前顶点的未被访问过的前驱顶点
             if (ve[Prev] + weight > ve[top[i]])
             {
-                ve[top[i]] = ve[Prev] + weight;
+                ve[top[i]] = ve[Prev] + weight; //更新路径值
             }
         }
     }
@@ -801,27 +806,27 @@ void getPost(AGraph agraph, int v, int &Post, int &weight, int visited[])
         }
     }
 }
-// 计算事件k最迟到发生时间
+// 计算事件(顶点)k最迟到发生时间[min{vl(j)-wieght<k,j>}]，在不推迟整个工程完成的前提下，该事件最迟必须发生的事件
 int *vl_k(int top[], AGraph agraph, int ve)
 {
     int *vl = new int[agraph.v]; // 存储结果
     for (int i = 0; i < agraph.v; i++)
     {
-        vl[i] = 99999;
+        vl[i] = INT16_MAX;
     }
     vl[top[agraph.v - 1]] = ve;
     for (int i = agraph.v - 2; i >= 0; i--)
-    { // 更具拓扑序列，依次求剩余结点的ve
+    { // 根据逆拓扑序列，依次求剩余结点的ve
         int *visited = new int[agraph.v];
         for (int k = 0; k < agraph.v; k++)
         {
             visited[k] = 0;
         }
-        for (int j = 0; j < agraph.adjlist[top[i]].outcount; j++)
+        for (int j = 0; j < agraph.adjlist[top[i]].outcount; j++) //遍历当前顶点的后继结点
         {
             int Post, weight;
             getPost(agraph, top[i], Post, weight, visited);
-            if (vl[Post] - weight < vl[top[i]])
+            if (vl[Post] - weight < vl[top[i]]) //跟新最小值
             {
                 vl[top[i]] = vl[Post] - weight;
             }
@@ -830,6 +835,7 @@ int *vl_k(int top[], AGraph agraph, int ve)
     return vl;
 }
 
+//恢复图状态
 void restore(AGraph agraph)
 {
     for (int i = 0; i < agraph.v; i++)
@@ -851,7 +857,7 @@ void restore(AGraph agraph)
         }
     }
 }
-// 计算活动最早开始时间
+// 计算活动(边)最早开始时间，活动的最早发生时间即为发出该活动的事件的最早发生时间
 void e_k(AGraph agraph, int *ve, map<string, int> &e)
 {
     for (int i = 0; i < agraph.v; i++)
@@ -865,7 +871,7 @@ void e_k(AGraph agraph, int *ve, map<string, int> &e)
         }
     }
 }
-
+//计算活动最迟发生时间[Vl(j)-weight<k,j>]
 void l_k(AGraph agraph, int *vl, map<string, int> &l)
 {
     for (int i = 0; i < agraph.v; i++)
@@ -879,7 +885,7 @@ void l_k(AGraph agraph, int *vl, map<string, int> &l)
         }
     }
 }
-
+//求解关键路径
 void key_route(map<string, int> &e, map<string, int> l, AGraph &agraph)
 {
     // 关键路径上的活动即关键活动
@@ -897,23 +903,27 @@ void key_route(map<string, int> &e, map<string, int> l, AGraph &agraph)
             loop = e.erase(loop++); // 从map中删除非关键活动
         }
     }
-    int i;
-    cout << "关键路径为:";
-    for (i = 0; i < agraph.v; i++)
+    restore(agraph);
+    int source, i;
+    for (i = 0; i < agraph.v; i++) //寻找汇点
     {
-        ArcNode *p = agraph.adjlist[i].firstarc;
-        while (p != nullptr)
+        if (agraph.adjlist[i].incount == 0)
         {
-            if (e.count(p->info))
-            {
-                cout << agraph.adjlist[i].data << "--->";
-                length += p->weight;
-            }
-            p = p->nextarc;
+            source = i;
+            break;
         }
     }
-    cout << agraph.adjlist[i - 1].data << endl; // 汇点
-    cout << "路径长度为:" << length << endl;
+    cout << "关键路径:" << endl;
+    cout << source "----> ";
+    ArcNode *p = agraph.adjlist[i].firstarc;
+    while (p != nullptr)
+    {
+        if (e.count(p->info))
+        {
+            cout << p->adjvex "----> ";
+        }
+        p = agraph.adjlist[p->adjvex].firstarc;
+    }
 }
 /**
  * 求图的割点
@@ -923,7 +933,9 @@ void key_route(map<string, int> &e, map<string, int> l, AGraph &agraph)
  * timestamp 时间戳计数
  * low[] 记录顶点在不经过父顶点能够回到较早访问的顶点
  * root深度优先遍历起始顶点（根顶点）
- * 原理：若过某个顶点存在一个子顶点，能够不经过其回到在此顶点之前就访问过的顶点，则该顶点便不是割点，相反，如果某个顶点存在一个子顶点能够不经过其回到在此顶点之前就访问过的顶点，那么此顶点便是一个割点
+ * 原理：若过某个顶点存在一个子顶点，能够不经过其回到在此顶点之前就访问过的顶点，
+ 则该顶点便不是割点，相反，如果某个顶点存在一个子顶点不能够不经过其回到在此顶点之前
+ 就访问过的顶点，那么此顶点便是一个割点
  */
 void dfscut(AGraph agraph, int curr, int pre, int &timestamp, int low[], int root)
 {
